@@ -1,5 +1,5 @@
 import LoginForm from "@/components/LoginForm";
-import { useAuthStore } from "@/stores/useAuthStore";
+import { useAuth } from "@/context/auth";
 import { StatusBar } from "expo-status-bar";
 import {
   ActivityIndicator,
@@ -10,7 +10,7 @@ import {
 } from "react-native";
 
 export default function Index() {
-  const { isLoading, user, signOut } = useAuthStore();
+  const { isLoading, user, signOut } = useAuth();
 
   if (isLoading) {
     return (

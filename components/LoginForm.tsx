@@ -1,10 +1,10 @@
 import Google from "@/assets/icons/Google";
-import { useAuthStore } from "@/stores/useAuthStore";
+import { useAuth } from "@/context/auth";
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
 export default function LoginForm() {
-  const { signIn } = useAuthStore();
+  const { signIn } = useAuth();
 
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
