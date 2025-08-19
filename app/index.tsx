@@ -1,6 +1,6 @@
 import LoginForm from "@/components/LoginForm";
 import { useAuth } from "@/context/auth";
-import { StatusBar } from "expo-status-bar";
+
 import {
   ActivityIndicator,
   Pressable,
@@ -26,11 +26,11 @@ export default function Index() {
 
   return (
     <View style={styles.container}>
-      <Text>{JSON.stringify(user)}</Text>
+      <Text>{user.name}</Text>
+      <Text>{user.id}</Text>
       <Pressable style={styles.signOutButton} onPress={signOut}>
         <Text style={styles.signOutText}>Sign out</Text>
       </Pressable>
-      <StatusBar style="dark" backgroundColor="#000" />
     </View>
   );
 }
@@ -49,6 +49,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 10,
     backgroundColor: "#F15D0E",
+    marginTop: 10,
   },
   signOutText: {
     color: "#fff",
