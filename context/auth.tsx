@@ -1,6 +1,6 @@
+import { AuthUser } from "@/types/auth";
 import { tokenCache } from "@/utils/cache";
 import { BASE_URL, TOKEN_KEY_NAME } from "@/utils/constants";
-import { AuthUser } from "@/utils/middleware";
 import {
   AuthError,
   AuthRequestConfig,
@@ -14,7 +14,6 @@ import * as jose from "jose";
 import {
   createContext,
   ReactNode,
-  useCallback,
   useContext,
   useEffect,
   useState,
@@ -48,69 +47,72 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<AuthError | null>(null);
-  const [accessToken, setAccessToken] = useState("");
+  const [accessToken, setAccessToken] = useState<string | null>(null);
 
   const [request, response, promptAsync] = useAuthRequest(config, discovery);
 
   const isWeb = Platform.OS === "web";
 
-  const handleResponse = useCallback(async () => {
-    setIsLoading(true);
-
-    if (response?.type === "success") {
-      try {
-        const { code } = response.params;
-
-        // Detras hace una llamada al endpoint /api/auth/token y envia
-        // en el body el code, el platform OS...
-        const tokenResponse = await exchangeCodeAsync(
-          {
-            code,
-            extraParams: {
-              platform: Platform.OS,
-            },
-            clientId: "google",
-            redirectUri: makeRedirectUri(),
-          },
-          discovery,
-        );
-
-        if (isWeb) {
-          // For web the server sets the tokens in HTTP-only cookies
-          // We just need to get the user data from the response
-          const sessionResponse = await fetch(`${BASE_URL}/api/auth/session`, {
-            method: "GET",
-            credentials: "include",
-          });
-
-          if (sessionResponse.ok) {
-            const sessionData = await sessionResponse.json();
-            setUser({ ...sessionData, id: sessionData.sub } as AuthUser);
-          }
-        } else {
-          const accessToken = tokenResponse.accessToken;
-          if (accessToken) setAccessToken(accessToken);
-
-          // Save token to local storage
-          tokenCache?.saveToken(TOKEN_KEY_NAME, accessToken);
-
-          // Get user info
-          const decoded = jose.decodeJwt(accessToken);
-          setUser({ ...decoded, id: decoded.sub } as AuthUser);
-        }
-      } catch (err) {
-        console.log(err);
-      } finally {
-        setIsLoading(false);
-      }
-    } else if (response?.type === "error") {
-      setError(response.error as AuthError);
-    }
-  }, [response, isWeb]);
-
   useEffect(() => {
+    const handleResponse = async () => {
+      setIsLoading(true);
+
+      if (response?.type === "success") {
+        try {
+          const { code } = response.params;
+
+          // Detras hace una llamada al endpoint /api/auth/token y envia
+          // en el body el code, el platform OS, cliendId...
+          const tokenResponse = await exchangeCodeAsync(
+            {
+              code,
+              extraParams: {
+                platform: Platform.OS,
+              },
+              clientId: "google",
+              redirectUri: makeRedirectUri(),
+            },
+            discovery,
+          );
+
+          if (isWeb) {
+            // For web the server sets the tokens in HTTP-only cookies
+            // We just need to get the user data from the response
+            const sessionResponse = await fetch(
+              `${BASE_URL}/api/auth/session`,
+              {
+                method: "GET",
+                credentials: "include",
+              },
+            );
+
+            if (sessionResponse.ok) {
+              const sessionData = await sessionResponse.json();
+              setUser({ ...sessionData, id: sessionData.sub } as AuthUser);
+            }
+          } else {
+            const accessToken = tokenResponse.accessToken;
+            if (accessToken) setAccessToken(accessToken);
+
+            // Save token to local storage
+            await tokenCache?.saveToken(TOKEN_KEY_NAME, accessToken);
+
+            // Get user info
+            const decoded = jose.decodeJwt(accessToken);
+            setUser({ ...decoded, id: decoded.sub } as AuthUser);
+          }
+        } catch (err) {
+          console.log(err);
+        } finally {
+          setIsLoading(false);
+        }
+      } else if (response?.type === "error") {
+        setError(response.error as AuthError);
+      }
+    };
+
     handleResponse();
-  }, [handleResponse]);
+  }, [response, isWeb]);
 
   useEffect(() => {
     const restoreSession = async () => {
@@ -148,7 +150,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
               console.log("Access token is invalid");
               setAccessToken("");
               setUser(null);
-              tokenCache?.deleteToken(TOKEN_KEY_NAME);
+              await tokenCache?.deleteToken(TOKEN_KEY_NAME);
             }
           }
         }
@@ -175,7 +177,23 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const signOut = () => {};
+  const signOut = async () => {
+    if (isWeb) {
+      try {
+        await fetch("/api/auth/logout", {
+          method: "POST",
+          credentials: "include",
+        });
+      } catch (err) {
+        console.error("Error during web logout", err);
+      }
+    } else {
+      await tokenCache?.deleteToken(TOKEN_KEY_NAME);
+    }
+
+    setUser(null);
+    setAccessToken(null);
+  };
 
   const fetchWithAuth = async (url: string, options: RequestInit) => {
     if (isWeb) {
@@ -183,13 +201,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       if (response.status === 401) {
         console.log("Api request failed with 401, attempting to refresh token");
-
-        // await refreshAccessToken();
-
-        // If we still hace a user after refresh, retry the request:
-        if (user) {
-          return fetch(url, { ...options, credentials: "include" });
-        }
       }
 
       return response;
@@ -202,7 +213,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         },
       });
 
-      // if repsonse is 401 you need to refresh token
+      if (response.status === 401) {
+        console.log("Api request failed with 401, attempting to refresh token");
+      }
 
       return response;
     }

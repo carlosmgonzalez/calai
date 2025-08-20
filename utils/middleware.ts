@@ -1,19 +1,6 @@
 import * as jose from "jose";
 import { COOKIE_NAME, JWT_SECRET } from "@/utils/constants";
-
-export type AuthUser = {
-  id: string;
-  email: string;
-  name: string;
-  picture?: string;
-  given_name?: string;
-  family_name?: string;
-  email_verified?: boolean;
-  provider?: string;
-  exp?: number;
-  cookieExpiration?: number; // Added for web cookie expiration tracking
-};
-
+import { AuthUser } from "@/types/auth";
 /**
  * Middleware to authenticate API requests using JWT from Authorization header or cookies
  * @param handler The API route handler to be protected

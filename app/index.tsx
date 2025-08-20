@@ -1,5 +1,6 @@
 import LoginForm from "@/components/LoginForm";
 import { useAuth } from "@/context/auth";
+import { useState } from "react";
 
 import {
   ActivityIndicator,
@@ -10,7 +11,22 @@ import {
 } from "react-native";
 
 export default function Index() {
-  const { isLoading, user, signOut } = useAuth();
+  const { isLoading, user, signOut, fetchWithAuth } = useAuth();
+  const [protectedData, setProtectedData] = useState(null);
+  const [loadingData, setLoadingData] = useState<boolean>(false);
+
+  const getProtectedData = async () => {
+    setLoadingData(true);
+    try {
+      const response = await fetchWithAuth("/api/protected/data", {});
+      const data = await response.json();
+      setProtectedData(data);
+    } catch {
+      console.log("Error while getting the protected data");
+    } finally {
+      setLoadingData(false);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -29,8 +45,13 @@ export default function Index() {
       <Text>{user.name}</Text>
       <Text>{user.id}</Text>
       <Pressable style={styles.signOutButton} onPress={signOut}>
-        <Text style={styles.signOutText}>Sign out</Text>
+        <Text style={styles.buttonText}>Sign out</Text>
       </Pressable>
+      <Pressable style={styles.fetchButton} onPress={getProtectedData}>
+        <Text style={styles.buttonText}>Fetch protected data</Text>
+      </Pressable>
+      <Text>{protectedData && JSON.stringify(protectedData, null, 4)}</Text>
+      {loadingData && <ActivityIndicator />}
     </View>
   );
 }
@@ -51,7 +72,17 @@ const styles = StyleSheet.create({
     backgroundColor: "#F15D0E",
     marginTop: 10,
   },
-  signOutText: {
+  buttonText: {
     color: "#fff",
+  },
+  fetchButton: {
+    padding: 5,
+    borderRadius: 5,
+    justifyContent: "center",
+    alignItems: "center",
+    flexDirection: "row",
+    gap: 10,
+    backgroundColor: "#186927",
+    marginTop: 10,
   },
 });
