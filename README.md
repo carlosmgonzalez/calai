@@ -1,50 +1,25 @@
-# Welcome to your Expo app 👋
+# CalAi
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+(Español)
+## Descripción:
+Esta es una aplicación que, mediante inteligencia artificial, nos ayudará a obtener las calorías y las propiedades nutricionales de la comida que vamos a ingerir con solo tomarle una foto. Podremos guardar esa información y hacer un seguimiento diario de nuestra ingesta calórica para observar cómo comemos a lo largo del tiempo; de este modo será más fácil seguir un plan de alimentación que se adapte a nuestros objetivos.
 
-## Get started
+## Tecnologías utilizadas:
+1. React Native (Expo) como framework
+2. PostgreSQL para la base de datos
+3. Drizzle como ORM
+4. TypeScript como lenguaje
+5. OAuth con Google para la autenticación
 
-1. Install dependencies
+---
 
-   ```bash
-   npm install
-   ```
+(English)
+## Description:
+This application uses artificial intelligence to help determine the calories and nutritional properties of the food you are going to consume just by taking a photo. You can save that information and track your daily calorie intake to see how you're eating over time; this makes it easier to follow a nutrition plan that adapts to your goals.
 
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## Technologies used:
+1. React Native (Expo) as the framework
+2. PostgreSQL for the database
+3. Drizzle as the ORM
+4. TypeScript as the language
+5. OAuth with Google for authentication

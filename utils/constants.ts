@@ -33,6 +33,7 @@ export const APPLE_AUTH_URL = "https://appleid.apple.com/auth/authorize";
 export const BASE_URL = process.env.EXPO_PUBLIC_BASE_URL;
 export const APP_SCHEME = process.env.EXPO_PUBLIC_SCHEME;
 export const JWT_SECRET = process.env.JWT_SECRET!;
+export const DATABASE_URL = process.env.DATABASE_URL;
 
 // Cookie Settings
 export const COOKIE_OPTIONS = {

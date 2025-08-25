@@ -1,3 +1,5 @@
+import { db } from "@/drizzle";
+import { user } from "@/drizzle/schema";
 import {
   COOKIE_MAX_AGE,
   COOKIE_NAME,
@@ -8,6 +10,7 @@ import {
   JWT_EXPIRATION_TIME,
   JWT_SECRET,
 } from "@/utils/constants";
+import { eq } from "drizzle-orm";
 import * as jose from "jose";
 
 type AccessToken = {
@@ -60,6 +63,20 @@ export async function POST(request: Request) {
   const userInfo = jose.decodeJwt(data.id_token) as AccessToken;
   const { exp, ...userInfoWithoutExp } = userInfo;
 
+  const userExists = await db.query.user.findFirst({
+    where: eq(user.email, userInfo.email),
+  });
+
+  if (!userExists) {
+    await db.insert(user).values({
+      id: userInfo.sub,
+      email: userInfo.email,
+      name: userInfo.name,
+      image: userInfo.picture,
+      emailVerified: userInfo.email_verified,
+    });
+  }
+
   // User id
   const sub = userInfo.sub;
 
@@ -75,8 +92,6 @@ export async function POST(request: Request) {
     .sign(new TextEncoder().encode(JWT_SECRET));
 
   if (platform === "web") {
-    console.log("hello web");
-
     const res = Response.json({
       success: true,
       issuedAt,
