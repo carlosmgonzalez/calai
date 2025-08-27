@@ -1,5 +1,5 @@
-import { db } from "@/drizzle";
-import { user } from "@/drizzle/schema";
+import { db } from "@/lib/drizzle";
+import { user } from "@/lib/drizzle/schema";
 import {
   COOKIE_MAX_AGE,
   COOKIE_NAME,
