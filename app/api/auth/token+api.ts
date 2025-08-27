@@ -63,10 +63,12 @@ export async function POST(request: Request) {
   const userInfo = jose.decodeJwt(data.id_token) as AccessToken;
   const { exp, ...userInfoWithoutExp } = userInfo;
 
+  // Buscamos si existe el usuario en la base de datos por el email;
   const userExists = await db.query.user.findFirst({
     where: eq(user.email, userInfo.email),
   });
 
+  // Se guarda en la base de datos en usuario si no existe
   if (!userExists) {
     await db.insert(user).values({
       id: userInfo.sub,
