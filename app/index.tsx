@@ -4,9 +4,11 @@ import { useRef, useState } from "react";
 import { Camera, Images, SwitchCamera, X } from "lucide-react-native";
 import { CameraView, useCameraPermissions, type CameraType } from "expo-camera";
 import { SafeAreaView } from "react-native-safe-area-context";
+import * as ImagePicker from "expo-image-picker";
 
 import {
   ActivityIndicator,
+  FlatList,
   Image,
   Pressable,
   StyleSheet,
@@ -15,11 +17,16 @@ import {
   View,
 } from "react-native";
 import { DataAnalysis, FoodAnalysis } from "@/types/ai";
+import { ThemedText } from "@/components/ThemedText";
 
 export default function Index() {
   const { isLoading, user, fetchWithAuth, signOut } = useAuth();
+
+  const [permissionCamera, requestPermissionCamera] = useCameraPermissions();
+  const [permissionLibrary, requestPermissionLibrary] =
+    ImagePicker.useMediaLibraryPermissions();
+
   const [facing, setFacing] = useState<CameraType>("back");
-  const [permission, requestPermission] = useCameraPermissions();
   const [cameraOn, setCameraOn] = useState(false);
   const [pictureData, setPictureData] = useState<{
     base64: string;
@@ -47,6 +54,29 @@ export default function Index() {
     }
   };
 
+  const pickImage = async () => {
+    if (!permissionLibrary) return;
+
+    if (permissionLibrary.granted) {
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ["images"],
+        quality: 1,
+        base64: true,
+        selectionLimit: 1,
+      });
+
+      if (!result.canceled) {
+        setPictureData({
+          base64: result.assets[0].base64!,
+          uri: result.assets[0].uri,
+        });
+        setCameraOn(false);
+      }
+    } else {
+      requestPermissionLibrary();
+    }
+  };
+
   const [foodAnalysis, setFoodAnalysis] = useState<FoodAnalysis | null>(null);
   const [isAnalysing, setIsAnalysing] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -65,6 +95,7 @@ export default function Index() {
       });
 
       const data: DataAnalysis = await response.json();
+      console.log(JSON.stringify(data.foodAnalysis, null, 4));
       setFoodAnalysis(data.foodAnalysis);
     } catch (err) {
       console.error(err);
@@ -88,20 +119,42 @@ export default function Index() {
     return <LoginForm />;
   }
 
-  if (!permission) {
+  if (!permissionCamera) {
     return <View />;
   }
 
-  if (!permission.granted) {
+  if (!permissionCamera.granted) {
     return (
-      <View style={styles.container}>
-        <Text style={styles.message}>
-          We need your permission to show the camera
-        </Text>
-        <Pressable style={styles.button} onPress={requestPermission}>
-          <Text style={styles.button}>Grant permits</Text>
-        </Pressable>
-      </View>
+      <SafeAreaView style={{ flex: 1, paddingHorizontal: 10 }}>
+        <ThemedText
+          fontFamily="bold"
+          style={{
+            fontSize: 40,
+            alignSelf: "flex-start",
+          }}
+        >
+          CalAi
+        </ThemedText>
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <ThemedText style={{ textAlign: "center" }}>
+            We need your permission to show the camera
+          </ThemedText>
+          <Pressable
+            style={[styles.button, { width: "100%" }]}
+            onPress={requestPermissionCamera}
+          >
+            <ThemedText fontFamily="bold" style={{ color: "#fff" }}>
+              Allow
+            </ThemedText>
+          </Pressable>
+        </View>
+      </SafeAreaView>
     );
   }
 
@@ -135,7 +188,7 @@ export default function Index() {
           <TouchableOpacity style={styles.buttonTake} onPress={takePicture}>
             <Camera color="#fff" size={36} />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.buttonImages} onPress={takePicture}>
+          <TouchableOpacity style={styles.buttonImages} onPress={pickImage}>
             <Images color="#fff" />
           </TouchableOpacity>
         </View>
@@ -151,17 +204,17 @@ export default function Index() {
             alignItems: "center",
           }}
         >
-          <Text
+          <ThemedText
+            fontFamily="bold"
             style={{
-              ...styles.textBold,
               fontSize: 40,
             }}
           >
             CalAi
-          </Text>
+          </ThemedText>
           {user && (
             <View
-              style={{ flexDirection: "row", alignItems: "center", gap: 4 }}
+              style={{ flexDirection: "row", alignItems: "center", gap: 6 }}
             >
               <TouchableOpacity onPress={() => setShow((c) => !c)}>
                 <Image
@@ -171,17 +224,17 @@ export default function Index() {
               </TouchableOpacity>
               {show && (
                 <TouchableOpacity onPress={signOut}>
-                  <Text style={{ ...styles.textBold, fontSize: 14 }}>
+                  <ThemedText fontFamily="bold" style={{ fontSize: 14 }}>
                     Logout
-                  </Text>
+                  </ThemedText>
                 </TouchableOpacity>
               )}
             </View>
           )}
         </View>
-        <Text style={{ ...styles.textRegular, fontSize: 20 }}>
+        <ThemedText style={{ fontSize: 18 }}>
           Analyze your food and get detailed nutritional information
-        </Text>
+        </ThemedText>
         {pictureData ? (
           <View style={{ flex: 1 }}>
             <Image source={{ uri: pictureData.uri }} style={styles.picture} />
@@ -192,19 +245,95 @@ export default function Index() {
                 <View
                   style={{ flexDirection: "row", gap: 4, alignItems: "center" }}
                 >
-                  <Text style={{ ...styles.textBold, fontSize: 18 }}>
+                  <ThemedText fontFamily="bold" style={{ fontSize: 18 }}>
                     Analyzing
-                  </Text>
+                  </ThemedText>
                   <ActivityIndicator color="#000" />
                 </View>
               ) : foodAnalysis ? (
                 <View style={{ flexDirection: "column" }}>
-                  <Text style={{ ...styles.textBold, fontSize: 18 }}>
+                  <ThemedText fontFamily="bold" style={{ fontSize: 18 }}>
                     Description
-                  </Text>
-                  <Text style={{ ...styles.textRegular, fontSize: 16 }}>
+                  </ThemedText>
+                  <ThemedText style={{ fontSize: 16 }}>
                     {foodAnalysis.identifiedFood}
-                  </Text>
+                  </ThemedText>
+                  <ThemedText
+                    fontFamily="bold"
+                    style={{ fontSize: 18, marginTop: 10 }}
+                  >
+                    Nutrientes por porcion
+                  </ThemedText>
+                  <FlatList
+                    data={[
+                      {
+                        title: "Protein",
+                        value: foodAnalysis.nutritionFactsPerPortion.protein,
+                      },
+                      {
+                        title: "Calories",
+                        value: foodAnalysis.nutritionFactsPerPortion.calories,
+                      },
+                      {
+                        title: "Carbs",
+                        value: foodAnalysis.nutritionFactsPerPortion.carbs,
+                      },
+                      {
+                        title: "Fat",
+                        value: foodAnalysis.nutritionFactsPerPortion.fat,
+                      },
+                      {
+                        title: "Fiber",
+                        value: foodAnalysis.nutritionFactsPerPortion.fiber,
+                      },
+                      {
+                        title: "Sodium",
+                        value: foodAnalysis.nutritionFactsPerPortion.sodium,
+                      },
+                      {
+                        title: "Cholesterol",
+                        value:
+                          foodAnalysis.nutritionFactsPerPortion.cholesterol,
+                      },
+                    ]}
+                    renderItem={({ item }) => (
+                      <View
+                        key={item.title}
+                        style={{
+                          flexDirection: "column",
+                          backgroundColor: "white",
+                          padding: 10,
+                          marginVertical: 8,
+                          borderRadius: 10,
+
+                          // Sombra para iOS
+                          shadowColor: "#000",
+                          shadowOffset: {
+                            width: 0,
+                            height: 2,
+                          },
+                          shadowOpacity: 0.25,
+                          shadowRadius: 3.84,
+
+                          // Sombra para Android
+                          elevation: 2,
+                        }}
+                      >
+                        <ThemedText fontFamily="bold" style={{ fontSize: 16 }}>
+                          {item.title}
+                        </ThemedText>
+                        <ThemedText style={{ fontSize: 16 }}>
+                          {item.value}
+                        </ThemedText>
+                      </View>
+                    )}
+                    keyExtractor={(item) => item.title}
+                    horizontal
+                    ItemSeparatorComponent={() => (
+                      <View style={{ width: 12 }}></View>
+                    )}
+                    contentContainerStyle={{ marginHorizontal: 2 }}
+                  />
                 </View>
               ) : error ? (
                 <Text>{error}</Text>
@@ -214,15 +343,15 @@ export default function Index() {
                     style={{ ...styles.button, flex: 1 }}
                     onPress={() => analyzeImage(pictureData.base64)}
                   >
-                    <Text
+                    <ThemedText
+                      fontFamily="bold"
                       style={{
-                        ...styles.textBold,
                         fontSize: 18,
                         color: "#fff",
                       }}
                     >
                       Analizy food
-                    </Text>
+                    </ThemedText>
                   </TouchableOpacity>
                   <Pressable
                     style={{
@@ -234,11 +363,12 @@ export default function Index() {
                       setCameraOn(true);
                     }}
                   >
-                    <Text
-                      style={{ ...styles.textBold, fontSize: 18, color: "000" }}
+                    <ThemedText
+                      fontFamily="bold"
+                      style={{ fontSize: 18, color: "000" }}
                     >
                       Open camera
-                    </Text>
+                    </ThemedText>
                   </Pressable>
                 </>
               )}
@@ -252,9 +382,12 @@ export default function Index() {
                 setCameraOn(true);
               }}
             >
-              <Text style={{ ...styles.textBold, fontSize: 18, color: "#fff" }}>
+              <ThemedText
+                fontFamily="bold"
+                style={{ fontSize: 18, color: "#fff" }}
+              >
                 Open camera
-              </Text>
+              </ThemedText>
             </Pressable>
           </View>
         )}

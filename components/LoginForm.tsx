@@ -3,6 +3,7 @@ import { useAuth } from "@/context/auth";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { ThemedText } from "./ThemedText";
 
 export default function LoginForm() {
   const { signIn } = useAuth();
@@ -17,11 +18,13 @@ export default function LoginForm() {
       >
         CalAi
       </Text>
-      <Text style={{ ...styles.textRegular, fontSize: 20, marginBottom: 10 }}>
+      <ThemedText style={{ fontSize: 20, marginBottom: 10 }}>
         Analyze your food and get detailed nutritional information
-      </Text>
+      </ThemedText>
       <TouchableOpacity style={styles.signInButton} onPress={signIn}>
-        <Text style={styles.signInText}>Sign in with Google</Text>
+        <ThemedText fontFamily="bold" style={styles.signInText}>
+          Sign in with Google
+        </ThemedText>
         <Google width="20px" />
       </TouchableOpacity>
     </SafeAreaView>
@@ -40,7 +43,6 @@ const styles = StyleSheet.create({
   },
   signInText: {
     color: "#fff",
-    fontFamily: "Quicksand-Bold",
     fontSize: 18,
   },
   textRegular: {
