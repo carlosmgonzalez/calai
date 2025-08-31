@@ -105,7 +105,52 @@ export default function Index() {
     }
   };
 
-  const [show, setShow] = useState(false);
+  interface SaveAnalysisData {
+    imageBase64: string;
+    identifiedFood: string;
+    portionSize: string;
+    healthScore: string;
+    dietaryInfo: string;
+    additionalNotes: string;
+  }
+
+  const saveAnalysis = async (data: SaveAnalysisData) => {
+    const { imageBase64, ...restData } = data;
+    try {
+      const uploadRes = await fetchWithAuth("/api/protected/upload-image", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          imageBase64,
+        }),
+      });
+
+      const result = await uploadRes.json();
+
+      if (result.ok) {
+        console.log("Image uploaded successfully!", result.imageUrl);
+        // Aquí puedes hacer algo con la URL de la imagen
+        await fetchWithAuth("/api/protected/save-analysis", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            imageUrl: result.imageUrl,
+            ...restData,
+          }),
+        });
+      } else {
+        console.error("Upload failed:", result.error);
+      }
+    } catch (error) {
+      console.error("Upload error:", error);
+    }
+  };
+
+  const [showLogout, setShowLogout] = useState(false);
 
   if (isLoading) {
     return (
@@ -216,13 +261,13 @@ export default function Index() {
             <View
               style={{ flexDirection: "row", alignItems: "center", gap: 6 }}
             >
-              <TouchableOpacity onPress={() => setShow((c) => !c)}>
+              <TouchableOpacity onPress={() => setShowLogout((c) => !c)}>
                 <Image
                   source={{ uri: user.picture }}
                   style={{ width: 30, height: 30, borderRadius: 100 }}
                 />
               </TouchableOpacity>
-              {show && (
+              {showLogout && (
                 <TouchableOpacity onPress={signOut}>
                   <ThemedText fontFamily="bold" style={{ fontSize: 14 }}>
                     Logout
@@ -334,6 +379,30 @@ export default function Index() {
                     )}
                     contentContainerStyle={{ marginHorizontal: 2 }}
                   />
+                  <TouchableOpacity
+                    style={{ ...styles.button }}
+                    onPress={() =>
+                      saveAnalysis({
+                        imageBase64: pictureData.base64,
+                        identifiedFood: foodAnalysis.identifiedFood,
+                        portionSize: foodAnalysis.portionSize,
+                        healthScore: foodAnalysis.healthScore,
+                        dietaryInfo: foodAnalysis.dietaryInfo.join("//"),
+                        additionalNotes:
+                          foodAnalysis.additionalNotes.join("//"),
+                      })
+                    }
+                  >
+                    <ThemedText
+                      fontFamily="bold"
+                      style={{
+                        fontSize: 18,
+                        color: "#fff",
+                      }}
+                    >
+                      Save
+                    </ThemedText>
+                  </TouchableOpacity>
                 </View>
               ) : error ? (
                 <Text>{error}</Text>

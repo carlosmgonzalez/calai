@@ -1,0 +1,381 @@
+{
+  "id": "97c47b7e-21d5-4003-9b12-b6133aa017be",
+  "prevId": "37b4df2e-9181-4ec1-844d-390e49a5d4aa",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.food_analysis": {
+      "name": "food_analysis",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "image_url": {
+          "name": "image_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "identified_food": {
+          "name": "identified_food",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "portion_size": {
+          "name": "portion_size",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "health_score": {
+          "name": "health_score",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "dietary_info": {
+          "name": "dietary_info",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "additional_notes": {
+          "name": "additional_notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "food_analysis_user_id_user_id_fk": {
+          "name": "food_analysis_user_id_user_id_fk",
+          "tableFrom": "food_analysis",
+          "tableTo": "user",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.nutrition_facts_per_100g": {
+      "name": "nutrition_facts_per_100g",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "calories": {
+          "name": "calories",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "protein": {
+          "name": "protein",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "carbs": {
+          "name": "carbs",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "fat": {
+          "name": "fat",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "saturated_fat": {
+          "name": "saturated_fat",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "trans_fat": {
+          "name": "trans_fat",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "fiber": {
+          "name": "fiber",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sugar": {
+          "name": "sugar",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sodium": {
+          "name": "sodium",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "cholesterol": {
+          "name": "cholesterol",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "food_analysis_id": {
+          "name": "food_analysis_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "nutrition_facts_per_100g_food_analysis_id_food_analysis_id_fk": {
+          "name": "nutrition_facts_per_100g_food_analysis_id_food_analysis_id_fk",
+          "tableFrom": "nutrition_facts_per_100g",
+          "tableTo": "food_analysis",
+          "columnsFrom": [
+            "food_analysis_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "nutrition_facts_per_100g_food_analysis_id_unique": {
+          "name": "nutrition_facts_per_100g_food_analysis_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "food_analysis_id"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.nutrition_facts_per_portion": {
+      "name": "nutrition_facts_per_portion",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "calories": {
+          "name": "calories",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "protein": {
+          "name": "protein",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "carbs": {
+          "name": "carbs",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "fat": {
+          "name": "fat",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "saturated_fat": {
+          "name": "saturated_fat",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "trans_fat": {
+          "name": "trans_fat",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "fiber": {
+          "name": "fiber",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sugar": {
+          "name": "sugar",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sodium": {
+          "name": "sodium",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "cholesterol": {
+          "name": "cholesterol",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "food_analysis_id": {
+          "name": "food_analysis_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "nutrition_facts_per_portion_food_analysis_id_food_analysis_id_fk": {
+          "name": "nutrition_facts_per_portion_food_analysis_id_food_analysis_id_fk",
+          "tableFrom": "nutrition_facts_per_portion",
+          "tableTo": "food_analysis",
+          "columnsFrom": [
+            "food_analysis_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "nutrition_facts_per_portion_food_analysis_id_unique": {
+          "name": "nutrition_facts_per_portion_food_analysis_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "food_analysis_id"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.user": {
+      "name": "user",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email_verified": {
+          "name": "email_verified",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "image": {
+          "name": "image",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "user_email_unique": {
+          "name": "user_email_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "email"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

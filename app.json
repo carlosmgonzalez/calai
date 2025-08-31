@@ -50,7 +50,8 @@
         {
           "photosPermission": "Allow the app accesses your photos."
         }
-      ]
+      ],
+      "expo-sqlite"
     ],
     "experiments": {
       "typedRoutes": true
