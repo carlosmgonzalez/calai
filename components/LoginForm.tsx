@@ -1,23 +1,14 @@
 import Google from "@/assets/icons/Google";
 import { useAuth } from "@/context/auth";
 import React from "react";
-import { StyleSheet, Text, TouchableOpacity } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { ThemedText } from "./ThemedText";
 
 export default function LoginForm() {
   const { signIn } = useAuth();
 
   return (
-    <SafeAreaView style={{ flex: 1, paddingHorizontal: 10 }}>
-      <Text
-        style={{
-          ...styles.textBold,
-          fontSize: 40,
-        }}
-      >
-        CalAi
-      </Text>
+    <View style={{ flex: 1, paddingHorizontal: 10 }}>
       <ThemedText style={{ fontSize: 20, marginBottom: 10 }}>
         Analyze your food and get detailed nutritional information
       </ThemedText>
@@ -27,7 +18,7 @@ export default function LoginForm() {
         </ThemedText>
         <Google width="20px" />
       </TouchableOpacity>
-    </SafeAreaView>
+    </View>
   );
 }
 

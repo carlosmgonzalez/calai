@@ -63,8 +63,10 @@ export function withAuth<T extends Response>(
         new TextEncoder().encode(jwtSecret), // jose requires you to encode the secret key manually
       );
 
+      const { sub, ...userInfo } = decoded.payload;
+
       // Call the handler with the authenticated user
-      return await handler(req, decoded.payload as AuthUser);
+      return await handler(req, { ...userInfo, id: sub } as AuthUser);
     } catch (error) {
       if (error instanceof jose.errors.JWTExpired) {
         console.error("Token expired:", error.reason);

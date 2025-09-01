@@ -84,11 +84,12 @@ export const POST = withAuth(async (request, user) => {
           Important instructions:
           - Ensure the response is in valid JSON format, exactly as specified above, without any Markdown formatting.
           - Provide realistic estimates based on typical portion sizes and nutritional databases.
-          - Be as specific and precise as possible when identifying food and its components.**
-          - Give all responses in English.**
+          - Be as specific and precise as possible when identifying food and its components.
+          - Give all responses in English.
           - Make sure to calculate nutritional values both per portion and per 100g for easy comparison.
           - If you cannot clearly identify the food or there are hidden elements, explicitly indicate limitations in your analysis.
-          - Provide ranges when precision is uncertain (e.g., "200-250 calories").
+          - Provides nutritional value without units of measurement and in string format (e.g., "120").
+          - Does not provide a range, just a specific value (e.g., "250").
           - If you detect multiple foods in the image, analyze the dish as a whole but mention main components in "identifiedIngredients".
           - For healthScore, consider factors like: nutrient density, presence of processed foods, macronutrient balance, and vitamin/mineral content.
           - In allergens, include only those that may actually be present based on identified ingredients.`,
