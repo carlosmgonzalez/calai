@@ -11,7 +11,8 @@
     "lint": "expo lint",
     "db:generate:postgres": "drizzle-kit generate --config=drizzle.config.postgres.ts",
     "db:generate:sqlite": "drizzle-kit generate --config=drizzle.config.sqlite.ts",
-    "db:migrate:postgres": "drizzle-kit migrate --config=drizzle.config.postgres.ts"
+    "db:migrate:postgres": "drizzle-kit migrate --config=drizzle.config.postgres.ts",
+    "vercel-build": "expo export -p web"
   },
   "dependencies": {
     "@expo/vector-icons": "^14.1.0",
@@ -29,6 +30,7 @@
     "expo-camera": "~16.1.11",
     "expo-constants": "~17.1.7",
     "expo-crypto": "~14.1.5",
+    "expo-dev-client": "~5.2.4",
     "expo-font": "~13.3.2",
     "expo-haptics": "~14.1.4",
     "expo-image": "~2.4.0",
