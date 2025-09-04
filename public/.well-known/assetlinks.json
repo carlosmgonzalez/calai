@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.carlosmgonzalez.calai",
+      "sha256_cert_fingerprints": [
+        "46:77:68:70:A7:B0:D2:52:1C:64:01:1C:C0:27:D6:D5:BE:2B:2C:39:85:1C:B0:2F:E0:E2:F2:CB:C4:F7:A2:E0"
+      ]
+    }
+  }
+]

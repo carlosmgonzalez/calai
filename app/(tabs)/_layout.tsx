@@ -57,10 +57,10 @@ export default function TabLayout() {
           }}
         />
         <Tabs.Screen
-          name="record"
+          name="records"
           options={{
             tabBarIcon: ({ color }) => <FolderKanban size={28} color={color} />,
-            title: "Record",
+            title: "Records",
           }}
         />
       </Tabs>

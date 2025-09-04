@@ -22,6 +22,29 @@
       "permissions": [
         "android.permission.CAMERA",
         "android.permission.RECORD_AUDIO"
+      ],
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "https",
+              "host": "carlosmgonzalez-calai.expo.app",
+              "pathPrefix": "/records"
+            }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        },
+        {
+          "action": "VIEW",
+          "data": [
+            {
+              "scheme": "calai"
+            }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
       ]
     },
     "web": {
@@ -33,7 +56,7 @@
       [
         "expo-router",
         {
-          "origin": "https://carlosmgonzalez-calai--3ispsyewxm.expo.app"
+          "origin": "https://carlosmgonzalez-calai.expo.app"
         }
       ],
       [
